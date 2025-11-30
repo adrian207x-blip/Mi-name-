@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ahorcado - Purple Theme</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        text-align: center;
+        background: linear-gradient(135deg, #3b0a57, #6a0dad);
+        color: white;
+        padding: 20px;
+    }
+    h1 {
+        font-size: 38px;
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px #d28bff;
+    }
+    #gameBox {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(6px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 25px;
+        width: 380px;
+        margin: auto;
+        box-shadow: 0 0 20px rgba(162, 93, 255, 0.7);
+    }
+    #canvas {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid #d5a5ff;
+        border-radius: 10px;
+        display: block;
+        margin: 0 auto;
+    }
+    #letras {
+        letter-spacing: 10px;
+        font-size: 28px;
+        margin-top: 20px;
+        color: #ffe6ff;
+    }
+    #mensaje {
+        font-size: 20px;
+        margin-top: 15px;
+        color: #ffb3ff;
+        text-shadow: 0 0 6px #d28bff;
+        min-height: 1.2em;
+    }
+    input {
+        margin-top: 15px;
+        padding: 8px;
+        font-size: 20px;
+        width: 60px;
+        text-align: center;
+        border-radius: 8px;
+        border: 2px solid #c57bff;
+        outline: none;
+        background: rgba(255, 255, 255, 0.35);
+        color: white;
+    }
+    input::placeholder {
+        color: #f8dfff;
+    }
+    button {
+        padding: 10px 20px;
+        margin-left: 10px;
+        font-size: 18px;
+        border-radius: 10px;
+        border: none;
+        background: #b84bff;
+        color: white;
+        cursor: pointer;
+        transition: 0.2s;
+        box-shadow: 0 0 10px rgba(214, 132, 255, 0.7);
+    }
+    button:hover {
+        background: #d678ff;
+        transform: scale(1.03);
+    }
+</style>
+</head>
+<body>
+
+<h1>El juego para ahorcado</h1>
+<div id="gameBox">
+    <canvas id="canvas" width="300" height="200"></canvas>
+
+    <div id="letras"></div>
+    <div id="mensaje"></div>
+
+    <input id="inputLetra" maxlength="1" placeholder="A" style="text-transform:uppercase;">
+    <button id="btnProbar">Probar</button>
+</div>
+
+<script>
+// --- Configuración ---
+const palabras = ["HAMILTON","ADRIAN","ORTIZ","RIVERA"];
+let indicePalabra = 0;
+let palabra = palabras[indicePalabra];
+let letrasCorrectas = new Set();
+let errores = 0;
+const maxErrores = 6;
+
+const elLetras = document.getElementById("letras");
+const elMensaje = document.getElementById("mensaje");
+const inputLetra = document.getElementById("inputLetra");
+const btnProbar = document.getElementById("btnProbar");
+
+// Inicializar pantalla
+elLetras.innerHTML = "_ ".repeat(palabra.length);
+dibujarAhorcado();
+inputLetra.focus();
+
+btnProbar.addEventListener('click', intentar);
+inputLetra.addEventListener('keydown', (e) => { if (e.key === 'Enter') intentar(); });
+
+function dibujarAhorcado() {
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#fff";
+
+    // Base
+    ctx.beginPath(); ctx.moveTo(20, 180); ctx.lineTo(180, 180); ctx.stroke();
+    // Poste
+    ctx.beginPath(); ctx.moveTo(50, 180); ctx.lineTo(50, 20); ctx.stroke();
+    // Superior
+    ctx.beginPath(); ctx.moveTo(50, 20); ctx.lineTo(120, 20); ctx.stroke();
+    // Cuerda
+    ctx.beginPath(); ctx.moveTo(120, 20); ctx.lineTo(120, 50); ctx.stroke();
+
+    if (errores > 0) { // Cabeza
+        ctx.beginPath(); ctx.arc(120, 65, 15, 0, Math.PI * 2); ctx.stroke();
+    }
+    if (errores > 1) { // Cuerpo
+        ctx.beginPath(); ctx.moveTo(120, 80); ctx.lineTo(120, 120); ctx.stroke();
+    }
+    if (errores > 2) { // Brazo izquierdo
+        ctx.beginPath(); ctx.moveTo(120, 90); ctx.lineTo(100, 110); ctx.stroke();
+    }
+    if (errores > 3) { // Brazo derecho
+        ctx.beginPath(); ctx.moveTo(120, 90); ctx.lineTo(140, 110); ctx.stroke();
+    }
+    if (errores > 4) { // Pierna izquierda
+        ctx.beginPath(); ctx.moveTo(120, 120); ctx.lineTo(105, 150); ctx.stroke();
+    }
+    if (errores > 5) { // Pierna derecha
+        ctx.beginPath(); ctx.moveTo(120, 120); ctx.lineTo(135, 150); ctx.stroke();
+    }
+}
+
+function intentar() {
+    const letra = inputLetra.value.toUpperCase();
+    inputLetra.value = "";
+    inputLetra.focus();
+
+    if (!letra || !letra.match(/^[A-Z]$/)) return;
+
+    // Si la letra ya fue usada como correcta, ignorar
+    if (letrasCorrectas.has(letra)) return;
+
+    if (palabra.includes(letra)) {
+        letrasCorrectas.add(letra);
+    } else {
+        errores++;
+        dibujarAhorcado();
+    }
+
+    mostrarProgreso();
+    revisarEstado();
+}
+
+function mostrarProgreso() {
+    let texto = "";
+    for (const ch of palabra) {
+        texto += (letrasCorrectas.has(ch) ? ch : "_") + " ";
+    }
+    elLetras.innerHTML = texto;
+}
+
+function revisarEstado() {
+    if (errores >= maxErrores) {
+        // No revelar la palabra. Mostrar mensaje divertido.
+        elMensaje.innerHTML = "😵 Perdiste — No te creas, intenta JAJAJ";
+        // Reiniciar solo el intento (misma palabra)
+        errores = 0;
+        letrasCorrectas.clear();
+        elLetras.innerHTML = "_ ".repeat(palabra.length);
+        dibujarAhorcado();
+        return;
+    }
+
+    // Comprobar si ganó (todas las letras de la palabra están en el set)
+    const ganado = palabra.split("").every(l => letrasCorrectas.has(l));
+    if (ganado) {
+        elMensaje.innerHTML = "🎉 Correcto!";
+        setTimeout(siguientePalabra, 1500);
+    } else {
+        elMensaje.innerHTML = "";
+    }
+}
+
+function siguientePalabra() {
+    errores = 0;
+    letrasCorrectas.clear();
+    indicePalabra++;
+
+    if (indicePalabra >= palabras.length) {
+        elMensaje.innerHTML = "🔥 Terminaste todas las palabras!";
+        elLetras.innerHTML = "";
+        return;
+    }
+
+    palabra = palabras[indicePalabra];
+    elLetras.innerHTML = "_ ".repeat(palabra.length);
+    elMensaje.innerHTML = "";
+    dibujarAhorcado();
+}
+</script>
+
+</body>
+</html>
