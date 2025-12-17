@@ -2,98 +2,92 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Ahorcado - Blue Theme</title>
+<title>Ahorcado - Tema Morado</title>
 <style>
-    body {
-        font-family: 'Segoe UI', sans-serif;
-        text-align: center;
-        background: linear-gradient(135deg, #021f4b, #0a3d91);
-        color: white;
-        padding: 20px;
-    }
-    h1 {
-        font-size: 38px;
-        margin-bottom: 20px;
-        text-shadow: 0 0 10px #74b9ff;
-    }
-    #gameBox {
-        background: rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(6px);
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-radius: 15px;
-        padding: 25px;
-        width: 380px;
-        margin: auto;
-        box-shadow: 0 0 20px rgba(100, 180, 255, 0.7);
-    }
-    #canvas {
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid #8ecbff;
-        border-radius: 10px;
-        display: block;
-        margin: 0 auto;
-    }
-    #letras {
-        letter-spacing: 10px;
-        font-size: 28px;
-        margin-top: 20px;
-        color: #dbefff;
-    }
-    #mensaje {
-        font-size: 20px;
-        margin-top: 15px;
-        color: #a8d8ff;
-        text-shadow: 0 0 6px #74b9ff;
-        min-height: 1.2em;
-    }
-    input {
-        margin-top: 15px;
-        padding: 8px;
-        font-size: 20px;
-        width: 60px;
-        text-align: center;
-        border-radius: 8px;
-        border: 2px solid #4aa3ff;
-        outline: none;
-        background: rgba(255, 255, 255, 0.35);
-        color: white;
-    }
-    input::placeholder {
-        color: #d6ecff;
-    }
-    button {
-        padding: 10px 20px;
-        margin-left: 10px;
-        font-size: 18px;
-        border-radius: 10px;
-        border: none;
-        background: #2f80ed;
-        color: white;
-        cursor: pointer;
-        transition: 0.2s;
-        box-shadow: 0 0 10px rgba(100, 180, 255, 0.7);
-    }
-    button:hover {
-        background: #5aa9ff;
-        transform: scale(1.03);
-    }
+body {
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #2a003d, #5a189a);
+    color: white;
+    padding: 20px;
+}
+h1 {
+    font-size: 38px;
+    text-shadow: 0 0 12px #d28bff;
+}
+#gameBox {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(6px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 18px;
+    padding: 25px;
+    width: 380px;
+    margin: auto;
+    box-shadow: 0 0 25px rgba(180, 100, 255, 0.7);
+}
+#canvas {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid #d6a5ff;
+    border-radius: 12px;
+    display: block;
+    margin: 0 auto;
+}
+#letras {
+    letter-spacing: 10px;
+    font-size: 28px;
+    color: #f3d9ff;
+}
+#mensaje {
+    font-size: 20px;
+    color: #e0b3ff;
+    text-shadow: 0 0 8px #d28bff;
+    min-height: 1.2em;
+}
+input {
+    margin-top: 15px;
+    padding: 8px;
+    font-size: 20px;
+    width: 60px;
+    text-align: center;
+    border-radius: 8px;
+    border: 2px solid #b76cff;
+    background: rgba(255, 255, 255, 0.35);
+    color: white;
+}
+input::placeholder {
+    color: #f0d6ff;
+}
+button {
+    padding: 10px 22px;
+    font-size: 18px;
+    border-radius: 12px;
+    border: none;
+    background: #9d4edd;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(200, 120, 255, 0.8);
+    transition: 0.2s;
+}
+button:hover {
+    background: #c77dff;
+    transform: scale(1.05);
+}
 </style>
 </head>
 <body>
 
-<h1>El juego para ahorcado</h1>
+<h1>El juego del ahorcado</h1>
+
 <div id="gameBox">
     <canvas id="canvas" width="300" height="200"></canvas>
-
     <div id="letras"></div>
     <div id="mensaje"></div>
 
     <input id="inputLetra" maxlength="1" placeholder="A" style="text-transform:uppercase;">
-    <button id="btnProbar">Probar</button>
+    <button onclick="intentar()">Probar</button>
 </div>
 
 <script>
-// --- Configuración ---
 const palabras = ["HAMILTON","ADRIAN","ORTIZ","RIVERA"];
 let indicePalabra = 0;
 let palabra = palabras[indicePalabra];
@@ -104,45 +98,33 @@ const maxErrores = 6;
 const elLetras = document.getElementById("letras");
 const elMensaje = document.getElementById("mensaje");
 const inputLetra = document.getElementById("inputLetra");
-const btnProbar = document.getElementById("btnProbar");
 
-// Inicializar pantalla
 elLetras.innerHTML = "_ ".repeat(palabra.length);
 dibujarAhorcado();
-inputLetra.focus();
-
-btnProbar.addEventListener('click', intentar);
-inputLetra.addEventListener('keydown', (e) => { if (e.key === 'Enter') intentar(); });
 
 function dibujarAhorcado() {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.lineWidth = 3;
     ctx.strokeStyle = "#fff";
 
-    // Base
-    ctx.beginPath(); ctx.moveTo(20, 180); ctx.lineTo(180, 180); ctx.stroke();
-    // Poste
-    ctx.beginPath(); ctx.moveTo(50, 180); ctx.lineTo(50, 20); ctx.stroke();
-    // Superior
-    ctx.beginPath(); ctx.moveTo(50, 20); ctx.lineTo(120, 20); ctx.stroke();
-    // Cuerda
-    ctx.beginPath(); ctx.moveTo(120, 20); ctx.lineTo(120, 50); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(20,180); ctx.lineTo(180,180); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(50,180); ctx.lineTo(50,20); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(50,20); ctx.lineTo(120,20); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(120,20); ctx.lineTo(120,50); ctx.stroke();
 
-    if (errores > 0) { ctx.beginPath(); ctx.arc(120, 65, 15, 0, Math.PI * 2); ctx.stroke(); }
-    if (errores > 1) { ctx.beginPath(); ctx.moveTo(120, 80); ctx.lineTo(120, 120); ctx.stroke(); }
-    if (errores > 2) { ctx.beginPath(); ctx.moveTo(120, 90); ctx.lineTo(100, 110); ctx.stroke(); }
-    if (errores > 3) { ctx.beginPath(); ctx.moveTo(120, 90); ctx.lineTo(140, 110); ctx.stroke(); }
-    if (errores > 4) { ctx.beginPath(); ctx.moveTo(120, 120); ctx.lineTo(105, 150); ctx.stroke(); }
-    if (errores > 5) { ctx.beginPath(); ctx.moveTo(120, 120); ctx.lineTo(135, 150); ctx.stroke(); }
+    if (errores>0){ctx.beginPath();ctx.arc(120,65,15,0,Math.PI*2);ctx.stroke();}
+    if (errores>1){ctx.beginPath();ctx.moveTo(120,80);ctx.lineTo(120,120);ctx.stroke();}
+    if (errores>2){ctx.beginPath();ctx.moveTo(120,90);ctx.lineTo(100,110);ctx.stroke();}
+    if (errores>3){ctx.beginPath();ctx.moveTo(120,90);ctx.lineTo(140,110);ctx.stroke();}
+    if (errores>4){ctx.beginPath();ctx.moveTo(120,120);ctx.lineTo(105,150);ctx.stroke();}
+    if (errores>5){ctx.beginPath();ctx.moveTo(120,120);ctx.lineTo(135,150);ctx.stroke();}
 }
 
 function intentar() {
     const letra = inputLetra.value.toUpperCase();
     inputLetra.value = "";
-    inputLetra.focus();
 
     if (!letra || !letra.match(/^[A-Z]$/)) return;
     if (letrasCorrectas.has(letra)) return;
@@ -179,27 +161,9 @@ function revisarEstado() {
     const ganado = palabra.split("").every(l => letrasCorrectas.has(l));
     if (ganado) {
         elMensaje.innerHTML = "🎉 Correcto!";
-        setTimeout(siguientePalabra, 1500);
     } else {
         elMensaje.innerHTML = "";
     }
-}
-
-function siguientePalabra() {
-    errores = 0;
-    letrasCorrectas.clear();
-    indicePalabra++;
-
-    if (indicePalabra >= palabras.length) {
-        elMensaje.innerHTML = "🔥 Terminaste todas las palabras!";
-        elLetras.innerHTML = "";
-        return;
-    }
-
-    palabra = palabras[indicePalabra];
-    elLetras.innerHTML = "_ ".repeat(palabra.length);
-    elMensaje.innerHTML = "";
-    dibujarAhorcado();
 }
 </script>
 
