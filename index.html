@@ -2,45 +2,45 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Ahorcado - Tema Azul</title>
+<title>Ahorcado - Tema Morado</title>
 <style>
 body {
     font-family: 'Segoe UI', sans-serif;
     text-align: center;
-    background: linear-gradient(135deg, #021f4b, #0a3d91);
+    background: linear-gradient(135deg, #2a003d, #5a189a);
     color: white;
     padding: 20px;
 }
 h1 {
     font-size: 38px;
-    text-shadow: 0 0 10px #74b9ff;
+    text-shadow: 0 0 12px #d28bff;
 }
 #gameBox {
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(6px);
     border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 15px;
+    border-radius: 18px;
     padding: 25px;
     width: 380px;
     margin: auto;
-    box-shadow: 0 0 20px rgba(100, 180, 255, 0.7);
+    box-shadow: 0 0 25px rgba(180, 100, 255, 0.7);
 }
 #canvas {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid #8ecbff;
-    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid #d6a5ff;
+    border-radius: 12px;
     display: block;
     margin: 0 auto;
 }
 #letras {
     letter-spacing: 10px;
     font-size: 28px;
-    color: #dbefff;
+    color: #f3d9ff;
 }
 #mensaje {
     font-size: 20px;
-    color: #a8d8ff;
-    text-shadow: 0 0 6px #74b9ff;
+    color: #e0b3ff;
+    text-shadow: 0 0 8px #d28bff;
     min-height: 1.2em;
 }
 input {
@@ -50,24 +50,33 @@ input {
     width: 60px;
     text-align: center;
     border-radius: 8px;
-    border: 2px solid #4aa3ff;
+    border: 2px solid #b76cff;
     background: rgba(255, 255, 255, 0.35);
     color: white;
 }
+input::placeholder {
+    color: #f0d6ff;
+}
 button {
-    padding: 10px 20px;
+    padding: 10px 22px;
     font-size: 18px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: none;
-    background: #2f80ed;
+    background: #9d4edd;
     color: white;
     cursor: pointer;
+    box-shadow: 0 0 12px rgba(200, 120, 255, 0.8);
+    transition: 0.2s;
+}
+button:hover {
+    background: #c77dff;
+    transform: scale(1.05);
 }
 </style>
 </head>
 <body>
 
-<h1>El juego para ahorcado</h1>
+<h1>El juego del ahorcado</h1>
 
 <div id="gameBox">
     <canvas id="canvas" width="300" height="200"></canvas>
@@ -147,6 +156,13 @@ function revisarEstado() {
         elLetras.innerHTML = "_ ".repeat(palabra.length);
         dibujarAhorcado();
         return;
+    }
+
+    const ganado = palabra.split("").every(l => letrasCorrectas.has(l));
+    if (ganado) {
+        elMensaje.innerHTML = "🎉 Correcto!";
+    } else {
+        elMensaje.innerHTML = "";
     }
 }
 </script>
